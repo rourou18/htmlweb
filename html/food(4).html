@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>美食技艺 - 非遗传统文化</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #fff9f4;
+            line-height: 1.7;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #c0392b;
+            margin: 20px 0;
+            font-size: 42px;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #c0392b;
+            margin: 30px 0;
+            font-size: 26px;
+            text-align: center;
+            padding: 10px 0;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        h3 {
+            color: #c0392b;
+            margin: 40px 0 20px;
+            font-size: 26px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        p {
+            font-size: 16px;
+            color: #444;
+            margin-bottom: 18px;
+            text-indent: 2em;
+            line-height: 1.8;
+        }
+
+        .intro-p-box {
+            background: #fff;
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid #f0e6df;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .value-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .value-card {
+            flex: 1 1 45%;
+            background: #fff;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            border-left: 5px solid #e64a19;
+            transition: 0.3s;
+        }
+
+        .value-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(230, 74, 25, 0.1);
+        }
+
+        .value-card h4 {
+            font-size: 20px;
+            color: #c0392b;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .tag-box {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 8px 18px;
+            margin: 6px 10px;
+            background: #ffe0b2;
+            color: #c0392b;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .tag.active {
+            background: #c0392b;
+            color: #fff;
+            transform: scale(1.08);
+        }
+
+        .card-slide-wrap {
+            width: 100%;
+            height: 340px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin: 40px 0;
+        }
+
+        .food-card {
+            width: 220px;
+            height: 280px;
+            position: absolute;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            opacity: 0.85;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.5s ease;
+        }
+
+        .food-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s ease;
+        }
+
+        .food-card .card-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            text-align: center;
+            padding: 15px 0 10px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .food-card:hover {
+            z-index: 10;
+            transform: scale(1.1);
+            opacity: 1;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        .food-form {
+            background: #fff;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .food-form table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .food-form th,
+        .food-form td {
+            padding: 16px;
+            text-align: center;
+        }
+
+        .food-form th {
+            background: #c0392b;
+            color: #fff;
+            font-weight: normal;
+            font-size: 15px;
+        }
+
+        .food-form tr:nth-child(even) {
+            background: #fdf6f3;
+        }
+
+        .food-form tr:hover {
+            background: #ffe0d1;
+            transition: 0.3s;
+        }
+
+        .time-count-box,
+        .form-section {
+            background: #fff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #f5c6c1;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            padding: 20px;
+        }
+
+        .modal-box {
+            background: #fff;
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal .close-btn {
+            position: absolute;
+            right: 25px;
+            top: 20px;
+            font-size: 28px;
+            color: #c0392b;
+            cursor: pointer;
+        }
+
+        .modal-flex {
+            display: flex;
+            gap: 35px;
+            align-items: center;
+        }
+
+        .modal-left {
+            width: 45%;
+        }
+
+        .modal-left img {
+            width: 100%;
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-right {
+            width: 55%;
+        }
+
+        .info-item {
+            margin: 14px 0;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+
+        .info-item strong {
+            color: #e64a19;
+            font-size: 16px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #888;
+            font-size: 14px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .captcha-box {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .captcha {
+            background: #eee;
+            padding: 8px 15px;
+            letter-spacing: 3px;
+            font-weight: bold;
+            color: #c0392b;
+            cursor: pointer;
+        }
+
+        .form-section input,
+        .form-section textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 8px 0;
+        }
+
+        .btn-submit {
+            background: #c0392b;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .msg-list {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed #ccc;
+        }
+
+        .msg-item {
+            border: 1px solid #f0e6df;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 8px 0;
+            background: #fef8f3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>美食技艺</h1>
+    <h2>舌尖上的非遗</h2>
+    <div class="intro-p-box">
+        <p>人间烟火气，最抚凡人心。中华美食不止是味蕾上的美味，更是流淌千年的非物质文化遗产。一粥一饭藏匠心，一菜一味有传承，每一道风味都承载着地域风情、民俗故事与匠人坚守。</p>
+    </div>
+
+    <div class="time-count-box">
+        <p id="showTime"></p>
+    </div>
+
+    <div class="value-wrap">
+        <div class="value-card">
+            <h4>一、历史文化价值</h4>
+            <p>中华非遗美食技艺承载着数千年饮食文明发展脉络，沉淀了古人的饮食智慧与生活理念。</p>
+        </div>
+        <div class="value-card">
+            <h4>二、艺术审美价值</h4>
+            <p>非遗美食不仅注重口味调配，更讲究造型雕琢、色彩搭配与器皿映衬，蕴含着中式美学理念。</p>
+        </div>
+        <div class="value-card">
+            <h4>三、地域社会价值</h4>
+            <p>非遗美食是地域文化的鲜明名片，能够直观反映一方水土的物产特色与人文性格。</p>
+        </div>
+        <div class="value-card">
+            <h4>四、传承保护意义</h4>
+            <p>保护和传承非遗美食技艺，不仅是留住手工匠心与传统味道，更是延续民族文化根脉。</p>
+        </div>
+    </div>
+
+    <div class="tag-box">
+        <span class="tag">匠心制作</span>
+        <span class="tag">世代传承</span>
+        <span class="tag">地域风味</span>
+        <span class="tag">文化瑰宝</span>
+        <span class="tag">舌尖非遗</span>
+    </div>
+
+    <h3>非遗美食风采展示</h3>
+    <div class="card-slide-wrap">
+        <div class="food-card" style="left:10%" data-index="0">
+            <img src="img/bjky.jpg">
+            <div class="card-title">全聚德烤鸭</div>
+        </div>
+        <div class="food-card" style="left:24%" data-index="1">
+            <img src="img/db.jpg">
+            <div class="card-title">郫县豆瓣</div>
+        </div>
+        <div class="food-card" style="left:38%" data-index="2">
+            <img src="img/sxxc.jpg">
+            <div class="card-title">沙县小吃</div>
+        </div>
+        <div class="food-card" style="left:52%" data-index="3">
+            <img src="img/南京盐水鸭.jpg">
+            <div class="card-title">南京盐水鸭</div>
+        </div>
+        <div class="food-card" style="left:66%" data-index="4">
+            <img src="img/粽子.jpg">
+            <div class="card-title">嘉兴粽子</div>
+        </div>
+        <div class="food-card" style="left:80%" data-index="5">
+            <img src="img/云南过桥米线.jpg">
+            <div class="card-title">云南过桥米线</div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h4>美食留言板</h4>
+        <input type="text" id="username" placeholder="请输入昵称">
+        <textarea id="msg" rows="3" placeholder="分享你喜欢的非遗美食"></textarea>
+        <div class="captcha-box">
+            <input type="text" id="captchaInput" placeholder="验证码">
+            <div class="captcha" id="captchaCode">点击刷新</div>
+        </div>
+        <button class="btn-submit" id="submitBtn">提交留言</button>
+        <div class="msg-list" id="msgListBox"></div>
+    </div>
+
+    <h3>非遗美食名录表单</h3>
+    <div class="food-form">
+        <table>
+            <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>非遗美食名称</th>
+                    <th>所属地区</th>
+                    <th>非遗类别</th>
+                </tr>
+            </thead>
+            <tbody id="foodTable"></tbody>
+        </table>
+    </div>
+
+    <div class="modal" id="imgModal">
+        <span class="close-btn">×</span>
+        <div class="modal-box">
+            <img id="modalImgOnly" src="">
+        </div>
+    </div>
+    <div class="modal" id="foodModal">
+        <div class="modal-box">
+            <span class="close-btn">×</span>
+            <div class="modal-flex">
+                <div class="modal-left">
+                    <img id="modalImg" src="">
+                </div>
+                <div class="modal-right">
+                    <h3 id="modalName"></h3>
+                    <div class="info-item"><strong>所属地区：</strong><span id="modalArea"></span></div>
+                    <div class="info-item"><strong>非遗级别：</strong><span id="modalLevel"></span></div>
+                    <div class="info-item"><strong>起源历史：</strong><span id="modalOrigin"></span></div>
+                    <div class="info-item"><strong>制作工艺：</strong><span id="modalCraft"></span></div>
+                    <div class="info-item"><strong>风味特色：</strong><span id="modalFeature"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>版权所有 &copy; 2026 非遗传统文化网</p>
+    </footer>
+
+    <script>
+        $(function () {
+            let msgList = JSON.parse(localStorage.getItem("foodMsgList")) || [];
+
+            function renderMsgList() {
+                let html = "<h4>全部留言</h4>";
+                if (msgList.length === 0) {
+                    html += "<p style='color:#999'>暂无留言，快来发表第一条吧~</p>";
+                } else {
+                    $.each(msgList, function (i, item) {
+                        html += `<div class="msg-item">
+                            <strong>${item.name}</strong>  ${item.time}
+                            <p>${item.content}</p>
+                        </div>`;
+                    });
+                }
+                $("#msgListBox").html(html);
+            }
+            renderMsgList();
+
+            function showTime() {
+                let now = new Date();
+                let y = now.getFullYear(), m = now.getMonth() + 1, d = now.getDate();
+                let h = now.getHours(), mi = now.getMinutes(), s = now.getSeconds();
+                $("#showTime").text(`当前时间：${y}年${m}月${d}日 ${h}:${mi}:${s}`);
+            }
+            showTime();
+            setInterval(showTime, 1000);
+
+            let captcha = "";
+            function refreshCaptcha() {
+                let str = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+                captcha = "";
+                for (let i = 0; i < 4; i++) {
+                    captcha += str[Math.floor(Math.random() * str.length)];
+                }
+                $("#captchaCode").text(captcha);
+            }
+            refreshCaptcha();
+            $("#captchaCode").click(function () {
+                refreshCaptcha();
+                alert("验证码已刷新");
+            });
+
+            $("#submitBtn").click(function () {
+                let name = $("#username").val().trim();
+                let content = $("#msg").val().trim();
+                let inputCode = $("#captchaInput").val().trim();
+
+                if (!name || !content || inputCode.toUpperCase() !== captcha) {
+                    alert("填写不完整或验证码错误，请重新操作！");
+                    refreshCaptcha();
+                    return;
+                }
+
+                let nowTime = new Date().toLocaleString();
+                msgList.push({
+                    name: name,
+                    content: content,
+                    time: nowTime
+                });
+                localStorage.setItem("foodMsgList", JSON.stringify(msgList));
+
+                alert("留言提交成功！");
+                $("#username, #msg, #captchaInput").val("");
+                refreshCaptcha();
+                renderMsgList();
+            });
+
+            let foodList = [
+                { name: "全聚德挂炉烤鸭技艺", area: "北京", type: "传统技艺" },
+                { name: "郫县豆瓣传统制作技艺", area: "四川", type: "传统技艺" },
+                { name: "沙县小吃制作技艺", area: "福建", type: "传统技艺" },
+                { name: "南京盐水鸭制作技艺", area: "江苏", type: "传统技艺" },
+                { name: "嘉兴粽子制作技艺", area: "浙江", type: "传统技艺" },
+                { name: "云南过桥米线制作技艺", area: "云南", type: "传统技艺" }
+            ];
+            let tbodyHtml = "";
+            $.each(foodList, function (i, item) {
+                tbodyHtml += `<tr data-index="${i}">
+                    <td>${i + 1}</td>
+                    <td>${item.name}</td>
+                    <td>${item.area}</td>
+                    <td>${item.type}</td>
+                </tr>`;
+            });
+            $("#foodTable").html(tbodyHtml);
+
+            $(".food-card").click(function () {
+                let index = $(this).data("index");
+                let imgSrc = $(this).find("img").attr("src");
+                let foodName = $(this).find(".card-title").text();
+                $("#modalImgOnly").attr("src", imgSrc);
+                $("#imgModal").fadeIn(300);
+                alert(`您选择查看：${foodName}`);
+            });
+            $("#imgModal .close-btn").click(function () {
+                $("#imgModal").fadeOut(300);
+            });
+
+            $("#foodTable tr").click(function () {
+                let index = $(this).data("index");
+                let detail = getFoodDetail(index);
+                $("#modalName").text(detail.name);
+                $("#modalImg").attr("src", detail.img);
+                $("#modalArea").text(detail.area);
+                $("#modalLevel").text(detail.level);
+                $("#modalOrigin").text(detail.origin);
+                $("#modalCraft").text(detail.craft);
+                $("#modalFeature").text(detail.feature);
+                $("#foodModal").fadeIn(300);
+                alert(`正在查看：${detail.name}`);
+            });
+            $("#foodModal .close-btn").click(function () {
+                $("#foodModal").fadeOut(300);
+            });
+
+            $(".tag").click(function () {
+                $(this).toggleClass("active");
+            });
+
+            function getFoodDetail(index) {
+                let data = [
+                    {
+                        name: "全聚德挂炉烤鸭技艺", img: "img/bjky.jpg", area: "北京",
+                        level: "国家级非遗", origin: "清代起源，由宫廷烤禽技艺演变而来",
+                        craft: "选鸭、烫皮、晾坯、果木挂炉烤制，工序严谨",
+                        feature: "外皮枣红酥脆，肉质鲜嫩多汁，肥而不腻"
+                    },
+                    {
+                        name: "郫县豆瓣传统制作技艺", img: "img/db.jpg", area: "四川",
+                        level: "国家级非遗", origin: "始于明末清初，被誉为川菜之魂",
+                        craft: "蚕豆、辣椒、食盐搭配，经翻晒、露天发酵数年",
+                        feature: "色泽红亮、酱香浓郁、辣味柔和醇厚"
+                    },
+                    {
+                        name: "沙县小吃制作技艺", img: "img/sxxc.jpg", area: "福建",
+                        level: "国家级非遗", origin: "源于唐宋民间饮食，传承千年",
+                        craft: "手工擀皮、现包现煮，保留食材本味",
+                        feature: "口味清淡鲜美，品类丰富，经济实惠"
+                    },
+                    {
+                        name: "南京盐水鸭制作技艺", img: "南京盐水鸭.jpg", area: "江苏",
+                        level: "省级非遗", origin: "起源于六朝，明清时期风靡全城",
+                        craft: "选优质湖鸭，经腌制、卤煮、风干多道工序",
+                        feature: "皮白肉嫩、咸鲜适口，肉质紧实有嚼劲"
+                    },
+                    {
+                        name: "嘉兴粽子制作技艺", img: "img/粽子.jpg", area: "浙江",
+                        level: "国家级非遗", origin: "传承两千余年端午食粽传统",
+                        craft: "优质糯米搭配馅料，箬叶包裹后文火慢煮",
+                        feature: "糯而不烂、馅料饱满，清香绵长"
+                    },
+                    {
+                        name: "云南过桥米线制作技艺", img: "云南过桥米线.jpg", area: "云南",
+                        level: "省级非遗", origin: "源自蒙自民间传说，已有百年历史",
+                        craft: "高汤烫熟配菜，米线手工蒸制，爽滑筋道",
+                        feature: "汤清味鲜，食材丰富，鲜香爽口"
+                    }
+                ];
+                return data[index];
+            }
+        });
+    </script>
+</body>
+
+</html>

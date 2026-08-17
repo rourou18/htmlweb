@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>传统工艺 · 非遗传承（jQuery版）</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            background: #fef7e8;
+            color: #2e241f;
+            line-height: 1.4;
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fffcf5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 头部 */
+        header {
+            background: linear-gradient(135deg, #7c3f1f, #a55d35);
+            padding: 1.2rem;
+            text-align: center;
+            border-bottom: 6px solid #e6bc8e;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #fff3e0;
+        }
+
+        .sub {
+            color: #fbe6c2;
+            font-size: .85rem;
+            margin-top: 4px;
+        }
+
+        #nowTime {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        main {
+            flex: 1;
+            padding: 1.5rem;
+        }
+
+        /* 卡片通用 */
+        .card {
+            background: #fff;
+            border-radius: 28px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,.04);
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            border-left: 6px solid #c2814a;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+            color: #4a2a1a;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin: 1rem 0 .5rem;
+            color: #8b5a34;
+        }
+
+        p {
+            margin-bottom: .8rem;
+        }
+
+        /* 正方体3D旋转 核心样式 */
+        .cube-box {
+            width: 300px;
+            height: 300px;
+            margin: 40px auto;
+            perspective: 800px;
+        }
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: cubeRotate 20s linear infinite;
+        }
+        .cube:hover {
+            animation-play-state: paused;
+        }
+        .cube img {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 3px solid #f0dbc0;
+            padding: 3px;
+            background: #fef3e6;
+            cursor: pointer;
+        }
+        /* 正方体六个面定位 */
+        .img-front  { transform: translateZ(150px); }
+        .img-back   { transform: rotateY(180deg) translateZ(150px); }
+        .img-left   { transform: rotateY(-90deg) translateZ(150px); }
+        .img-right  { transform: rotateY(90deg) translateZ(150px); }
+        .img-top    { transform: rotateX(90deg) translateZ(150px); }
+        .img-bottom { transform: rotateX(-90deg) translateZ(150px); }
+
+        @keyframes cubeRotate {
+            0%   { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+
+        /* 工艺列表 */
+        .craft-list {
+            list-style: none;
+            margin: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: .6rem;
+        }
+        .craft-list li {
+            background: #fdf3e6;
+            padding: .6rem 1rem .6rem 2rem;
+            border-radius: 40px;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .craft-list li::before {
+            content: "✧";
+            position: absolute;
+            left: 14px;
+            color: #c2814a;
+            font-weight: bold;
+        }
+        .craft-list li:hover {
+            background: #efe0cf;
+            transform: translateX(5px);
+        }
+
+        /* 表格 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eedbc8;
+            text-align: left;
+        }
+        th {
+            background: #efe0cf;
+            color: #4f2d15;
+        }
+
+        /* 按钮 */
+        .btn {
+            background: #c2814a;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .btn:hover {
+            background: #a55d35;
+        }
+
+        /* 时间信息栏 */
+        .info-bar {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+            background: #fff0e0;
+            padding: 1rem;
+            border-radius: 12px;
+        }
+        .info-item {
+            color: #7c3f1f;
+            font-weight: 500;
+        }
+
+        /* 返回链接 */
+        .back-link{
+            display: inline-flex;
+            background: #efe2d2;
+            padding: 6px 20px;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #5f3c1e;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            transition: background 0.3s ease;
+        }
+        .back-link:hover{
+            background: #e6c7a0;
+        }
+
+        /* 表单 */
+        .form-group {
+            margin: 1rem 0;
+        }
+        .form-group label {
+            display: inline-block;
+            width: 100px;
+            color: #4a2a1a;
+        }
+        .form-group input, .form-group textarea {
+            padding: 6px 10px;
+            border: 1px solid #eedbc8;
+            border-radius: 6px;
+            width: 280px;
+            font-family: inherit;
+        }
+        .captcha-box {
+            display: inline-block;
+            background: #eee;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-left: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* 留言展示区 */
+        .msg-list{
+            margin-top:15px;
+            padding-top:15px;
+            border-top:1px dashed #ccc;
+        }
+        .msg-item{
+            background:#fdf3e6;
+            padding:10px 15px;
+            border-radius:12px;
+            margin-bottom:8px;
+        }
+        .msg-name{
+            font-weight:bold;
+            color:#a55d35;
+            margin-right:8px;
+        }
+        .msg-time{
+            font-size:12px;
+            color:#666;
+        }
+
+        /* 图片弹窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 16px;
+        }
+        .modal-content img {
+            max-width: 600px;
+            border-radius: 12px;
+        }
+
+        /* 底部 */
+        footer {
+            background: #2e241f;
+            color: #e7cfb5;
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.75rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <h1>🏺 巧夺天工 · 传统工艺</h1>
+            <div class="sub">陶瓷 · 织造 · 雕刻 · 金属锻造</div>
+            <div id="nowTime"></div>
+        </header>
+
+        <main>
+            <a href="index.html" class="back-link">🏠 返回首页</a>
+
+            <div class="info-bar">
+                <div class="info-item">⏰ 当前时间：<span id="countNowTime"></span></div>
+                <div class="info-item">📅 距离文化和自然遗产日：<span id="countdown"></span></div>
+            </div>
+
+            <div class="card">
+                <h2>🏺 匠心传承 · 非遗技艺</h2>
+                <p>传统工艺是华夏文明的活态瑰宝，景德镇瓷器、南京云锦、景泰蓝等凝聚历代工匠的卓绝智慧。</p>
+                <div class="cube-box">
+                    <div class="cube">
+                        <!-- 我只给你加上了class，你的图片路径完全不动！ -->
+                        <img class="img-front"  src="./img/微信图片_20260407214238_9230_1.jpg" alt="图片1">
+                        <img class="img-back"   src="./img/微信图片_20260407214239_9231_1.jpg" alt="图片2">
+                        <img class="img-left"   src="./img/微信图片_20260407214241_9232_1.jpg" alt="图片3">
+                        <img class="img-right"  src="./img/微信图片_20260510180340_15247_1.jpg" alt="图片4">
+                        <img class="img-top"    src="./img/微信图片_20260510180342_15248_1.jpg" alt="图片5">
+                        <img class="img-bottom" src="./img/微信图片_20260510180343_15249_1.jpg" alt="图片6">
+                    </div>
+                </div>
+
+                <h3>📌 工艺分类</h3>
+                <ul class="craft-list">
+                    <li>陶瓷烧造 · 千年窑火</li>
+                    <li>丝绸织造 · 云锦天工</li>
+                    <li>雕刻塑作 · 木雕石雕</li>
+                    <li>金属锻造 · 金银细工</li>
+                </ul>
+
+                <h3>🏆 国家级非遗代表作</h3>
+                <table id="craftTable">
+                    <thead>
+                        <tr>
+                            <th>工艺名称</th>
+                            <th>产地</th>
+                            <th>历史地位</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>景德镇瓷器</td>
+                            <td>江西景德镇</td>
+                            <td>始于汉代，明清御窑</td>
+                        </tr>
+                        <tr>
+                            <td>南京云锦</td>
+                            <td>江苏南京</td>
+                            <td>皇家织造，灿若云霞</td>
+                        </tr>
+                        <tr>
+                            <td>宜兴紫砂</td>
+                            <td>江苏宜兴</td>
+                            <td>宋代以来茶器珍品</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn" id="addRowBtn">➕ 动态添加传统工艺</button>
+            </div>
+
+            <!-- 留言板块 -->
+            <div class="card">
+                <h2>📝 传统工艺爱好者留言</h2>
+                <form id="msgForm">
+                    <div class="form-group">
+                        <label>昵称：</label>
+                        <input type="text" id="username" placeholder="请输入昵称">
+                    </div>
+                    <div class="form-group">
+                        <label>留言内容：</label>
+                        <textarea id="msgContent" rows="3" placeholder="请输入你的留言"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>验证码：</label>
+                        <input type="text" id="captchaInput" placeholder="请输入验证码">
+                        <span class="captcha-box" id="captchaCode">点击刷新</span>
+                        <span id="formMsg" style="margin-left:10px;color:red;"></span>
+                    </div>
+                    <button type="submit" class="btn">提交留言</button>
+                </form>
+
+                <div class="msg-list" id="msgList">
+                    <div style="color:#999;text-align:center;">暂无留言，快来发表吧～</div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>版权所有 © 2026 非遗传统文化网</p>
+        </footer>
+    </div>
+
+    <div class="modal" id="imgModal">
+        <div class="modal-content">
+            <img id="modalImg" src="" alt="大图预览">
+        </div>
+    </div>
+
+<script>
+$(function() {
+    // 实时时间
+    function showTime() {
+        const now = new Date();
+        $('#countNowTime').text(now.toLocaleString());
+        $('#nowTime').text(now.toLocaleTimeString());
+    }
+    setInterval(showTime, 1000);
+    showTime();
+
+    // 遗产日倒计时
+    function countDown() {
+        const now = new Date();
+        const year = now.getFullYear();
+        let juneFirst = new Date(year, 5, 1);
+        let dayOfWeek = juneFirst.getDay();
+        let diff = (6 - dayOfWeek + 7) % 7 + 7;
+        let heritageDay = new Date(year, 5, diff);
+        if (heritageDay < now) {
+            heritageDay = new Date(year + 1, 5, diff);
+        }
+        const diffTime = heritageDay - now;
+        const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        $('#countdown').text(`${days}天${hours}小时`);
+    }
+    setInterval(countDown, 1000);
+    countDown();
+
+    // 验证码
+    let captcha = '';
+    function generateCaptcha() {
+        captcha = Math.random().toString(36).substr(2,4).toUpperCase();
+        $('#captchaCode').text(captcha);
+        $('#formMsg').text('');
+    }
+    generateCaptcha();
+    $('#captchaCode').on('click', generateCaptcha);
+
+    // 留言提交
+    $('#msgForm').on('submit', function(e) {
+        e.preventDefault();
+        let username = $('#username').val().trim();
+        let content = $('#msgContent').val().trim();
+        let inputCode = $('#captchaInput').val().trim().toUpperCase();
+
+        if(username === ""){
+            $('#formMsg').text("昵称不能为空！");
+            return;
+        }
+        if(content === ""){
+            $('#formMsg').text("留言内容不能为空！");
+            return;
+        }
+        if(inputCode !== captcha){
+            $('#formMsg').text("验证码错误，请重试！");
+            generateCaptcha();
+            return;
+        }
+
+        $('#formMsg').text("留言提交成功！").css("color","green");
+        const nowTime = new Date().toLocaleString();
+        const msgHtml = `
+            <div class="msg-item">
+                <span class="msg-name">${username}</span>
+                <span class="msg-time">${nowTime}</span>
+                <div style="margin-top:6px;">留言：${content}</div>
+            </div>
+        `;
+
+        if($("#msgList").text().includes("暂无留言")){
+            $("#msgList").empty();
+        }
+        $("#msgList").prepend(msgHtml);
+
+        $('#username').val('');
+        $('#msgContent').val('');
+        $('#captchaInput').val('');
+        generateCaptcha();
+    });
+
+    // 动态添加表格行
+    const craftData = [
+        ["景泰蓝","北京","皇家御用金属工艺"],
+        ["东阳木雕","浙江东阳","中国四大木雕之一"],
+        ["苏绣","江苏苏州","中国四大名绣之首"]
+    ];
+    $('#addRowBtn').on('click', function() {
+        let random = Math.floor(Math.random() * craftData.length);
+        let data = craftData[random];
+        let newRow = `<tr><td>${data[0]}</td><td>${data[1]}</td><td>${data[2]}</td></tr>`;
+        $('#craftTable tbody').append(newRow);
+    });
+
+    // 图片点击弹窗预览
+    $('.cube img').on('click', function() {
+        let imgSrc = $(this).attr('src');
+        $('#modalImg').attr('src', imgSrc);
+        $('#imgModal').fadeIn(300).css("display", "flex");
+    });
+    $('#imgModal').on('click', function() {
+        $('#imgModal').fadeOut(300);
+    });
+});
+</script>
+</body>
+</html>

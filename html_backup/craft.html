@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>传统工艺 · 非遗传承</title>
+    <!-- ECharts必需CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth; /* 平滑滚动 */
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            background: #fef7e8;
+            color: #2e241f;
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fffcf5;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #7c3f1f, #a55d35);
+            padding: 1.2rem;
+            text-align: center;
+            border-bottom: 6px solid #e6bc8e;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #fff3e0;
+        }
+
+        .sub {
+            color: #fbe6c2;
+            font-size: .85rem;
+            margin-top: 4px;
+        }
+
+        #timeShow {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        main {
+            padding: 1.5rem;
+        }
+
+        .nav-link {
+            display: inline-block;
+            background: #c2814a;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-decoration: none;
+            margin-bottom: 1rem;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 28px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,.04);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            border-left: 6px solid #c2814a;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+            color: #4a2a1a;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin: 1rem 0 .5rem;
+            color: #8b5a34;
+        }
+
+        p {
+            margin-bottom: .8rem;
+        }
+
+        /* 3D正方体 精简样式 */
+        .cube-box{
+            width: 280px;
+            height: 280px;
+            margin: 30px auto;
+            perspective: 900px;
+        }
+        .cube{
+            width:100%;
+            height:100%;
+            position:relative;
+            transform-style:preserve-3d;
+            animation: autoRotate 22s linear infinite;
+        }
+        .cube-face{
+            position:absolute;
+            width:280px;
+            height:280px;
+            border:3px solid #f0dbc0;
+            border-radius:16px;
+            overflow:hidden;
+            cursor: grab;
+        }
+        .cube-face img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+        }
+        .front  {transform: translateZ(140px);}
+        .back   {transform: translateZ(-140px) rotateY(180deg);}
+        .left   {transform: translateX(-140px) rotateY(-90deg);}
+        .right  {transform: translateX(140px)  rotateY(90deg);}
+        .top    {transform: translateY(-140px) rotateX(90deg);}
+        .bottom {transform: translateY(140px)  rotateX(-90deg);}
+        @keyframes autoRotate{0%{transform:rotateY(0deg);}100%{transform:rotateY(360deg);}}
+
+        .craft-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+        .craft-list li {
+            background: #fdf3e6;
+            padding: .6rem 1rem .6rem 2rem;
+            border-radius: 40px;
+            position: relative;
+            margin-bottom: .6rem;
+        }
+        .craft-list li::before {
+            content: "✧";
+            position: absolute;
+            left: 14px;
+            color: #c2814a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eedbc8;
+            text-align: left;
+        }
+        th {
+            background: #efe0cf;
+            color: #4f2d15;
+        }
+
+        #addRowBtn {
+            background: #c2814a;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #countdown {
+            background: #fdf3e6;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .form-box {
+            background: #fdf3e6;
+            padding: 1.2rem;
+            border-radius: 16px;
+            margin: 1rem 0;
+        }
+        .form-item {
+            margin-bottom: 1rem;
+        }
+        .form-item label {
+            display: block;
+            margin-bottom: 4px;
+        }
+        .form-item input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #eedbc8;
+            border-radius: 8px;
+        }
+        .captcha-box {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        #captchaCode {
+            background: #eee;
+            padding: 8px 16px;
+            border-radius: 8px;
+            letter-spacing: 3px;
+            user-select: none;
+        }
+        #submitBtn {
+            background: #c2814a;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        #echarts-box {
+            width: 100%;
+            height: 350px;
+            margin: 1rem 0;
+        }
+        footer {
+            background: #2e241f;
+            color: #e7cfb5;
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.75rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <h1>🏺 巧夺天工 · 传统工艺</h1>
+            <div class="sub">陶瓷 · 织造 · 雕刻 · 金属锻造</div>
+            <div id="timeShow"></div>
+        </header>
+    <script src="nav.js"></script>
+
+    
+
+
+        <main>
+            <a href=" " class="nav-link">🏠 返回首页</a >
+            <div class="card">
+                <h2>🏺 匠心传承 · 非遗技艺</h2>
+                <p>传统工艺是华夏文明的活态瑰宝，景德镇瓷器、南京云锦、景泰蓝等凝聚历代工匠的卓绝智慧。</p >
+
+                <!-- 3D旋转正方体相册 -->
+                <div class="cube-box">
+                    <div class="cube">
+                        <div class="cube-face front"><img src="img/微信图片_20260318225646_95_614.jpg" alt="传统工艺"></div>
+                        <div class="cube-face right"><img src="img/微信图片_20260318225709_96_614.jpg" alt="织造"></div>
+                        <div class="cube-face back"><img src="img/微信图片_20260318230951_99_614.jpg" alt="雕刻"></div>
+                        <div class="cube-face left"><img src="img/dlqu登录页面.jpg" onerror="this.src='img/5.jpg'" alt="左侧工艺"></div>
+                        <div class="cube-face top"><img src="img/qm.jpg" alt="工艺"></div>
+                        <div class="cube-face bottom"><img src="img/db.jpg" alt="底部工艺"></div>
+                    </div>
+                </div>
+
+                <h3>📌 工艺分类</h3>
+                <ul class="craft-list">
+                    <li>陶瓷烧造 · 千年窑火</li>
+                    <li>丝绸织造 · 云锦天工</li>
+                    <li>雕刻塑作 · 木雕石雕</li>
+                    <li>金属锻造 · 金银细工</li>
+                </ul>
+
+                <h3>🏆 国家级非遗代表作</h3>
+                <table id="craftTable">
+                    <thead>
+                        <tr>
+                            <th>工艺名称</th>
+                            <th>产地</th>
+                            <th>历史地位</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>景德镇瓷器</td><td>江西景德镇</td><td>始于汉代，明清御窑</td></tr>
+                        <tr><td>南京云锦</td><td>江苏南京</td><td>皇家织造，灿若云霞</td></tr>
+                        <tr><td>宜兴紫砂</td><td>江苏宜兴</td><td>宋代以来茶器珍品</td></tr>
+                    </tbody>
+                </table>
+                <button id="addRowBtn">添加新非遗项目</button>
+
+                <h3>⏰ 非遗文化节倒计时</h3>
+                <div id="countdown"></div>
+
+                <h3>📊 传统工艺数量分布</h3>
+                <div id="echarts-box"></div>
+
+                <h3>✉️ 留言表单</h3>
+                <div class="form-box">
+                    <div class="form-item">
+                        <label>您的姓名</label>
+                        <input type="text" id="username" placeholder="请输入姓名">
+                    </div>
+                    <div class="form-item">
+                        <label>留言内容</label>
+                        <input type="text" id="message" placeholder="请输入留言">
+                    </div>
+                    <div class="form-item">
+                        <label>验证码</label>
+                        <div class="captcha-box">
+                            <input type="text" id="captchaInput" placeholder="请输入验证码">
+                            <span id="captchaCode"></span>
+                        </div>
+                    </div>
+                    <button id="submitBtn">提交留言</button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>版权所有 © 2026 非遗传统文化网</p >
+        </footer>
+    </div>
+
+    <script>
+        // 1.实时时间
+        function showTime(){
+            let now=new Date();
+            let t=now.toLocaleString('zh-CN');
+            document.getElementById('timeShow').innerText=t;
+        }
+        setInterval(showTime,1000);showTime();
+
+        // 2.倒计时
+        function countdown(){
+            let end=new Date('2026-10-01 00:00:00');
+            let now=new Date();
+            let d=Math.floor((end-now)/1000/60/60/24);
+            let h=Math.floor(((end-now)%(1000*60*60*24))/(1000*60*60));
+            let m=Math.floor(((end-now)%(1000*60*60))/(1000*60));
+            let s=Math.floor(((end-now)%(1000*60))/1000);
+            document.getElementById('countdown').innerText=`距离非遗文化节：${d}天${h}时${m}分${s}秒`;
+        }
+        setInterval(countdown,1000);countdown();
+
+        //3.动态添加表格
+        let arr=[
+            ["苏绣","江苏苏州","四大名绣之首"],
+            ["景泰蓝","北京","皇家工艺瑰宝"],
+            ["东阳木雕","浙江东阳","东方雕刻明珠"]
+        ];
+        let idx=0;
+        document.getElementById('addRowBtn').onclick=function(){
+            let tb=document.querySelector('#craftTable tbody');
+            let tr=document.createElement('tr');
+            tr.innerHTML=`<td>${arr[idx][0]}</td><td>${arr[idx][1]}</td><td>${arr[idx][2]}</td>`;
+            tb.appendChild(tr);
+            idx=(idx+1)%arr.length;
+        };
+
+        //4.ECharts图表
+        let myE=echarts.init(document.getElementById('echarts-box'));
+        myE.setOption({
+            title:{text:'传统工艺类型统计',left:'center'},
+            tooltip:{trigger:'item'},
+            series:[{
+                type:'pie',radius:'60%',
+                data:[
+                    {value:30,name:'陶瓷'},{value:25,name:'织造'},
+                    {value:20,name:'雕刻'},{value:15,name:'金属'},{value:10,name:'其他'}
+                ]
+            }]
+        });
+        window.onresize=()=>myE.resize();
+//5.验证码表单
+        let code='';
+        function getCode(){
+            let s='ABCDEFG23456789';code='';
+            for(let i=0;i<4;i++)code+=s[Math.floor(Math.random()*s.length)];
+            document.getElementById('captchaCode').innerText=code;
+        }
+        getCode();
+        document.getElementById('captchaCode').onclick=getCode;
+        document.getElementById('submitBtn').onclick=function(){
+            let n=document.getElementById('username').value.trim();
+            let m=document.getElementById('message').value.trim();
+            let c=document.getElementById('captchaInput').value.trim().toUpperCase();
+            if(!n||!m)return alert('请填写完整信息！');
+            if(c!==code)return alert('验证码错误！'),getCode();
+            alert('提交成功！');getCode();
+            document.getElementById('username').value='';
+            document.getElementById('message').value='';
+            document.getElementById('captchaInput').value='';
+        };
+
+        //6.3D正方体拖拽
+        let cube=document.querySelector('.cube');
+        let x1=y1=x2=y2=0,flag=false;
+        cube.onmousedown=e=>{flag=true;cube.style.animationPlayState='paused';x1=e.clientX;y1=e.clientY;};
+        document.onmousemove=e=>{
+            if(!flag)return;
+			let dx = e.clientX-x1;
+			let dy = e.clientY-y1;
+            cube.style.transform=`rotateX(${y2}deg) rotateY(${x2}deg)`;
+			x1 = e.clientX;
+			y1 = e.clientY;
+        };
+        document.onmouseup=()=>{flag=false;cube.style.animationPlayState='running';};
+    </script>
+</body>
+</html>

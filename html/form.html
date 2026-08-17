@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算机学术互认252网站布局试题</title>
+    <style>
+        body {
+            display: flex; 
+            flex-direction: column;
+            margin: 0; /* 建议加上以去除默认边距 */
+            min-height: 100vh; /* 新增：让 body 至少撑满整个屏幕高度 */
+			background-color: #f0f2f5;
+        }
+        
+        .page-header {
+			display: flex; 
+            text-align: center;
+            justify-content: center;
+			
+            background-color: #ddd; /* 给一块颜色方便区分 */
+        }
+
+        .nav-menu {
+            text-align: center;
+            background-color: blue; /* 改为蓝色背景 */
+        }
+        
+        .nav-list {
+            display: flex;
+            list-style: none; /* 去除列表默认点 */
+            padding: 0;
+            margin: 0; /* 加一行去掉原有的外边距，这样看起来非常贴合 */
+			
+        }
+
+        .nav-item {
+            flex: 1; /* 关键点：让每个列表项沾满剩余空间，均分宽度 */
+			
+        }
+
+        /* 顺便给链接加一点样式，不然蓝色背景上的蓝色默认链接字就看不清了 */
+        .nav-link {
+            display: block;
+            padding: 10px 0;
+            color: white; 
+            text-decoration: none;
+        }
+
+        /* 新增：包裹并排的三栏内容 */
+        .main-content {
+            display: flex;
+            flex-direction: row; 
+            width: 100%;
+            flex: 1; /* 新增：让中间内容区域自动填满剩余的垂直空间 */
+        }
+       
+        .left {
+            flex: 0 0 200px; 
+            background: #fff;
+        }
+        .center {
+            flex: 2;
+            background: #eaeaea;
+        }
+        .right {
+            flex: 1;
+            background: #fff;
+        }
+        
+        .page-footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <h1>计算机学术互认252网站布局试题</h1>
+    </header>
+    
+    <div class="nav-menu">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="#" class="nav-link">导航菜单1</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">导航菜单2</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">导航菜单3</a>
+            </li>
+			<li class="nav-item">
+                <a href="#" class="nav-link">导航菜单4</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 用一个大容器把左中右包裹起来让它们并排 -->
+    <div class="main-content">
+        <div class="left">
+            <h2>左侧边栏</h2>
+            <ol>
+                <li>导航栏1</li>
+                <li>导航栏2</li>
+                <li>导航栏3</li>
+            </ol>
+        </div>
+        
+        <div class="center">
+            <h2>主内容区</h2>
+        </div>
+        
+        <div class="right">
+            <h2>右侧边栏</h2>
+        </div>
+    </div>
+    
+    <footer class="page-footer">
+        @2026大连工业大学	
+    </footer>
+</body>
+</html>

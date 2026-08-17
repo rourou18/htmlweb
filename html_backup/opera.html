@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>传统戏曲 - 非遗传统文化</title>
+    <style>
+        :root {
+            --primary-bg: #FCF4EB;
+            --content-bg: #FFFFFF;
+            --theme-color: #A03125;
+            --text-color: #333333;
+            --border-color: #E2CBB0;
+        }
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            width: 85%;
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: var(--content-bg);
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            border-top: 5px solid var(--theme-color);
+        }
+        h1, h2, h3 {
+            color: var(--theme-color);
+            text-align: center;
+        }
+        h1 { font-size: 2.2em; margin-bottom: 20px; }
+        hr {
+            border: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, rgba(160, 49, 37, 0), rgba(160, 49, 37, 0.5), rgba(160, 49, 37, 0));
+            margin: 20px 0;
+        }
+        nav {
+            text-align: center;
+            background-color: #F8EBE1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--theme-color);
+            font-weight: bold;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border-radius: 4px;
+        }
+        nav a:hover {
+            background-color: var(--theme-color);
+            color: #fff;
+        }
+        .content {
+            font-size: 1.15em;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .opera-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0 30px 0;
+        }
+        .opera-list li {
+            background: #F8EBE1;
+            padding: 10px 25px;
+            border-radius: 50px;
+            color: var(--theme-color);
+            font-weight: bold;
+            border: 2px solid var(--border-color);
+            font-size: 1.1em;
+        }
+        .gallery {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .gallery img {
+            max-width: 80%;
+            height: auto;
+            border-radius: 8px;
+            border: 5px solid #F8EBE1;
+        }
+        footer {
+            text-align: center;
+            color: #777;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px dotted var(--border-color);
+            font-size: 0.9em;
+        }
+        /* 简单图表容器样式 */
+        #echarts-opera {
+            width: 100%;
+            height: 350px;
+            margin: 30px auto;
+        }
+    </style>
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+</head>
+<body>
+    <script src="nav.js"></script>
+
+    <div class="container">
+        <h1>传统戏曲</h1>
+        <hr>
+        
+    
+
+        
+        <h2>中华国粹——京剧与昆曲</h2>
+        <p class="content">戏曲是中国传统戏剧的通称，主要包括京剧、昆曲、越剧、黄梅戏等。</p>
+        
+        <h3>中国五大戏曲剧种</h3>
+        <ul class="opera-list">
+            <li>京剧</li>
+            <li>评剧</li>
+            <li>黄梅戏</li>
+            <li>豫剧</li>
+            <li>越剧</li>
+        </ul>
+        
+        <!-- 新增简单的 ECharts 容器 -->
+        <div id="echarts-opera"></div>
+
+        <div class="gallery">
+            <img src="./img/微信图片_20260318231304_74_23.jpg" alt="中国五大戏曲剧种">
+        </div>
+
+        <footer>
+            <p>版权所有 &copy; 2026 非遗传统文化网</p>
+        </footer>
+    </div>
+
+    <!-- 简单的 JavaScript 和 ECharts 初始化 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var chartDom = document.getElementById('echarts-opera');
+            var myChart = echarts.init(chartDom);
+            
+            // 极简配置的饼图，展示五大戏曲内容
+            var option = {
+                title: {
+                    text: '五大戏曲剧种热度分布样例',
+                    left: 'center',
+                    textStyle: {
+                        color: '#A03125',
+                        fontSize: 18
+                    }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b} : {c}%'
+                },
+                legend: {
+                    bottom: '0',
+                    left: 'center'
+                },
+                color: ['#A03125', '#C45A4A', '#E2CBB0', '#8c6f56', '#59382f'],
+                series: [
+                    {
+                        type: 'pie',
+                        radius: '55%',
+                        data: [
+                            { value: 35, name: '京剧' },
+                            { value: 20, name: '越剧' },
+                            { value: 15, name: '黄梅戏' },
+                            { value: 15, name: '豫剧' },
+                            { value: 15, name: '评剧' }
+                        ],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+            
+            myChart.setOption(option);
+            
+            // 响应式处理
+            window.addEventListener('resize', function() {
+                myChart.resize();
+            });
+        });
+    </script>
+</body>
+</html>

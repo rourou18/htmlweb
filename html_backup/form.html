@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>爱心捐款信息采集 - 意见反馈</title>
+    <style>
+        :root {
+            --primary-color: #8b2323;
+            --secondary-color: #cda85f;
+            --bg-color: #fcf9f2;
+        }
+        body {
+            max-width: 1000px;
+            margin: 0 auto;
+            font-family: "Microsoft YaHei", sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#eadac2 1px, transparent 1px);
+            background-size: 20px 20px;
+            padding: 20px;
+            text-align: center;
+        }
+        /* 简洁样式：表格300px居中、边框合并、按钮样式、提示颜色 */
+        table {
+            width: 320px;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        td, th {
+            border: 1px solid #bbb;
+            padding: 8px;
+            text-align: left;
+        }
+        button {
+            background-color: var(--primary-color);
+            border-radius: 3px;
+            border: none;
+            padding: 6px 15px;
+            color: white;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #6a1a1a; }
+        .info {
+            width: 300px;
+            margin: 15px auto 0;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+        .error   { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+        .note { width: 320px; margin: 8px auto; font-size: 12px; color: #555; text-align: center; }
+        
+        #captchaCanvas { cursor: pointer; border: 1px solid #ddd; background: #eee; }
+        
+        /* 动态表格容器 */
+        #recordsTableContainer {
+            width: 80%;
+            margin: 30px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
+        }
+        #recordsTable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        #recordsTable th, #recordsTable td {
+            border: 1px solid #ccc;
+            text-align: center;
+            padding: 8px;
+        }
+        #recordsTable th { background-color: var(--secondary-color); color: #fff; }
+    </style>
+</head>
+<body>
+<header>
+    <h1 style="color:#8b2323">爱心捐款与意见反馈</h1>
+</header>
+    <script src="nav.js"></script>
+
+
+
+<div style="text-align:center; padding-top:20px;">
+    <form id="donationForm">
+        <table>
+            <!-- 最上方添加志愿者募捐表单标题行，合并两列 -->
+            <tr><td colspan="2" style="text-align:center; font-weight:bold; background:#f0f7ea;">📋 志愿者募捐表单</td></tr>
+            <tr>
+                <td>📚 班级</td>
+                <td>
+                    <select id="class">
+                        <option>计算机25级ISEC1班</option>
+                        <option>计算机25级ISEC2班</option>
+                        <option>计算机25级ISEC3班</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>💰 捐款类型</td>
+                <td>
+                    <label><input type="radio" name="type" value="现金" checked> 现金</label>
+                    <label><input type="radio" name="type" value="物品"> 物品</label>
+                </td>
+            </tr>
+            <tr>
+                <td>🆔 学号</td>
+                <td><input type="text" id="stuId" placeholder="10位学号"></td>
+            </tr>
+            <tr>
+                <td>👤 姓名</td>
+                <td><input type="text" id="name" placeholder="至少2字"></td>
+            </tr>
+            <tr>
+                <td>💵 金额(元)</td>
+                <td><input type="text" id="amount" placeholder="1~100"></td>
+            </tr>
+            <tr>
+                <td>🔐 验证码</td>
+                <td>
+                    <canvas id="captchaCanvas" width="80" height="30"></canvas>
+                    <input type="text" id="captchaInput" style="width:60px;" placeholder="输入">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align:center">
+                    <button type="button" id="confirmBtn">确认捐款</button>
+                    <button type="button" id="resetBtn">重置</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div id="infoDisplay" class="info">等待输入...</div>
+    <div class="note">✓ 学号需10字符 &nbsp;|&nbsp; 姓名至少2字 &nbsp;|&nbsp; 金额1~100元</div>
+</div>
+
+<div id="recordsTableContainer">
+    <h3 style="color:#8b2323;">捐款记录（功能5：动态表格生成）</h3>
+    <table id="recordsTable">
+        <thead>
+            <tr>
+                <th>班级</th>
+                <th>学号</th>
+                <th>姓名</th>
+                <th>捐款类型</th>
+                <th>金额(元)</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // 强制使用jQuery处理
+    $(document).ready(function() {
+        var currentCaptcha = "";
+        
+        // 功能3：随机验证码生成并绘制
+        function drawCaptcha() {
+            var canvas = $('#captchaCanvas')[0];
+            var ctx = canvas.getContext("2d");
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            
+            var chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+            var text = "";
+            for(var i=0; i<4; i++){
+                text += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            currentCaptcha = text.toLowerCase();
+            
+            ctx.font = "bold 20px Arial";
+            ctx.fillStyle = "#8b2323";
+            ctx.fillText(text, 15, 22);
+            
+            // 绘制干扰线使用原生Canvas API是被允许的，因为这不属于业务逻辑Dom操作
+            for(var j=0; j<4; j++) {
+                ctx.strokeStyle = "rgba(0,0,0,0.2)";
+                ctx.beginPath();
+                ctx.moveTo(Math.random()*80, Math.random()*30);
+                ctx.lineTo(Math.random()*80, Math.random()*30);
+                ctx.stroke();
+            }
+        }
+        
+        drawCaptcha();
+        $('#captchaCanvas').click(drawCaptcha);
+        
+        // 功能4：表单校验
+        $('#confirmBtn').click(function() {
+            var cls = $('#class').val();
+            var dType = $('input[name="type"]:checked').val();
+            var id = $.trim($('#stuId').val());
+            var name = $.trim($('#name').val());
+            var amount = $.trim($('#amount').val());
+            var userCap = $.trim($('#captchaInput').val()).toLowerCase();
+            var $info = $('#infoDisplay');
+            
+            var errors = [];
+            if (id === '') errors.push('学号不能为空');
+            else if (id.length !== 10) errors.push('学号必须为10个字符');
+
+            if (name === '') errors.push('姓名不能为空');
+            else if (name.length < 2) errors.push('姓名至少需要2个字符');
+
+            var num = parseFloat(amount);
+            if (amount === '') errors.push('金额不能为空');
+            else if (isNaN(num)) errors.push('金额必须是数字');
+            else if (num < 1 || num > 100) errors.push('金额需在1~100元之间');
+            
+            if (userCap === '') errors.push('验证码不能为空');
+            else if (userCap !== currentCaptcha) errors.push('验证码不正确');
+            
+            $info.removeClass('success error');
+            if (errors.length > 0) {
+                $info.html('❌ 验证失败：<br>' + errors.join('；')).addClass('error');
+                drawCaptcha(); // 刷新验证码
+            } else {
+                $info.html('✅ 验证成功！感谢您的捐赠。').addClass('success');
+                
+                // 功能5：动态表格生成 (增删改)
+                $('#recordsTableContainer').fadeIn();
+                var tr = $('<tr>').append(
+                    $('<td>').text(cls),
+                    $('<td>').text(id),
+                    $('<td>').text(name),
+                    $('<td>').text(dType),
+                    $('<td>').text(num.toFixed(2)),
+                    $('<td>').append(
+                        $('<button>').text('删除').click(function(){
+                            $(this).closest('tr').fadeOut(300, function(){ $(this).remove(); });
+                        })
+                    )
+                );
+                tr.hide().appendTo('#recordsTable tbody').fadeIn(500);
+                
+                // 重置部分表单内容
+                $('#stuId').val('');
+                $('#name').val('');
+                $('#amount').val('');
+                $('#captchaInput').val('');
+                drawCaptcha();
+            }
+        });
+        
+        $('#resetBtn').click(function() {
+            $('#class').prop('selectedIndex', 0);
+            $('input[name="type"][value="现金"]').prop('checked', true);
+            $('#stuId, #name, #amount, #captchaInput').val('');
+            $('#infoDisplay').html('表单已重置，请填写信息').removeClass('success error');
+            drawCaptcha();
+        });
+    });
+</script>
+</body>
+</html>

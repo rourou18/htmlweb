@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>非遗概述 - 非遗传统文化</title>
+    <!-- 引入jQuery库 -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #8b2323; /* 传统朱红 */
+            --bg-color: #fcf9f2; /* 宣纸白 */
+            --text-color: #333333;
+            --link-color: #555555;
+            --border-color: #dcdcdc;
+        }
+        body {
+            font-family: "Microsoft YaHei", "SimSun", serif;
+            background-color: #f4f1ea;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px 0;
+            line-height: 1.8;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            border-top: 6px solid var(--primary-color);
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 2.4em;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: var(--primary-color);
+            border-left: 5px solid var(--primary-color);
+            padding-left: 12px;
+            margin-top: 40px;
+            font-size: 1.5em;
+        }
+        hr {
+            border: none;
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 25px 0;
+        }
+        nav {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--link-color);
+            margin: 0 12px;
+            font-weight: bold;
+            font-size: 1.05em;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: var(--primary-color);
+        }
+        .intro-content {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .intro-text {
+            flex: 1.5;
+            font-size: 1.1em;
+            text-indent: 2em;
+            text-align: justify;
+        }
+        .intro-image {
+            flex: 0.8;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+        .intro-image img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s ease;
+        }
+        .intro-image:hover img {
+            transform: scale(1.08); /* 沉浸式放大效果 */
+        }
+        .features {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 20px;
+        }
+        .feature-card {
+            background-color: #fff;
+            padding: 25px 20px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            flex: 1;
+            text-align: center;
+        }
+        .feature-card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 1.25em;
+        }
+        .feature-card p {
+            font-size: 0.95em;
+            color: #666;
+            margin-bottom: 0;
+        }
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            color: #888;
+            font-size: 0.95em;
+            border-top: 1px dashed var(--border-color);
+        }
+        /* ECharts 容器样式 */
+        #echarts-intro {
+            width: 100%;
+            height: 400px;
+            margin-top: 40px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        /* jQuery新增功能样式：实时系统时间 */
+        .time-show {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+    </style>
+    <!-- 引入 ECharts 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 唯一新增功能：jQuery实现实时系统时间 -->
+        <div class="time-show" id="nowTime"></div>
+        <div class="time-show" id="dwTime"></div>
+
+        <h1>非物质文化遗产概述</h1>
+        <script src="nav.js"></script>
+
+        <h2>什么是非物质文化遗产？</h2>
+        <div class="intro-content">
+            <div class="intro-text">
+                <p>非物质文化遗产（Intangible Cultural Heritage）是指被各社区、群体，有时是个人，视为其文化遗产组成部分的各种社会实践、观念表述、表现形式、知识、技能以及相关的工具、实物、手工艺品和文化场所。</p >
+                <p>它代表着人类历史的记忆，包含着人类非凡的创造力。它不仅包括口头传统和表现形式、表演艺术，还涵盖了社会实践、仪式、节庆活动，有关自然界和宇宙的知识和实践，以及传统手工艺等多方面内容。非遗是民族文化自信的重要基石。</p >
+            </div>
+            <div class="intro-image">
+                <img src="./img/微信图片_20260407135439_245_2.jpg" alt="非物质文化遗产概览">
+            </div>
+        </div>
+
+        <h2>非遗的核心分类</h2>
+        <div class="features">
+            <div class="feature-card">
+                <h3>🗣️ 口头传统</h3>
+                <p>如民间神话、史诗、民间故事、谚语等语言与表述形式。</p >
+            </div>
+            <div class="feature-card">
+                <h3>🎭 表演艺术</h3>
+                <p>包含传统音乐、舞蹈、戏曲、曲艺及木偶皮影等艺术。</p >
+            </div>
+            <div class="feature-card">
+                <h3>🤲 传统手工艺</h3>
+                <p>如刺绣、年画、剪纸、青瓷烧制、木雕等独特世代技艺。</p >
+            </div>
+        </div>
+
+        <h2>历批国家级非遗项目数量趋势</h2>
+        <div id="echarts-intro"></div>
+
+        <footer>
+            <p>版权所有 &copy; 2026 非遗传统文化网 | 传承中华文脉，守护民族之魂</p >
+        </footer>
+    </div>
+
+    <!-- 全部使用jQuery语法，无原生JS代码 -->
+    <script>
+        // 1. jQuery实现实时系统时间（唯一新增功能）
+        $(function(){
+            function showTime(){
+                let now = new Date();
+                let year = now.getFullYear();
+                let month = now.getMonth() + 1;
+                let day = now.getDate();
+                let h = now.getHours();
+                let m = now.getMinutes();
+                let s = now.getSeconds();
+                // 时间补零
+                month = month < 10 ? "0"+month : month;
+                day = day < 10 ? "0"+day : day;
+                h = h < 10 ? "0"+h : h;
+                m = m < 10 ? "0"+m : m;
+                s = s < 10 ? "0"+s : s;
+                // jQuery DOM赋值
+                $("#nowTime").text("当前系统时间：" + year + "-" + month + "-" + day + " " + h + ":" + m + ":" + s);
+
+                // 计算距离端午节的时间（以2026年6月19日为例）
+                let targetDate = new Date(year, 5, 19);
+                if (now > targetDate) {
+                    targetDate = new Date(year + 1, 5, 9); // 2027年端午节是6月9日
+                }
+                let diff = targetDate.getTime() - now.getTime();
+                let diffD = Math.floor(diff / (1000 * 60 * 60 * 24));
+                let diffH = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let diffM = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                let diffS = Math.floor((diff % (1000 * 60)) / 1000);
+                $("#dwTime").text("距离端午节还有：" + diffD + "天 " + diffH + "时 " + diffM + "分 " + diffS + "秒");
+            }
+            showTime();
+            setInterval(showTime,1000);
+        });
+
+        // 2. ECharts初始化改用jQuery实现，彻底移除原生addEventListener
+        $(function () {
+            var chartDom = $('#echarts-intro')[0];
+            if (chartDom) {
+                var myChart = echarts.init(chartDom);
+                var option = {
+                    title: {
+                        text: '1-5批国家级非物质文化遗产名录项目数量',
+                        left: 'center',
+                        textStyle: {
+                            color: '#8b2323',
+                            fontSize: 18,
+                            fontWeight: 'bold',
+                            fontFamily: '"Microsoft YaHei", sans-serif'
+                        }
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        borderColor: '#8b2323',
+                        textStyle: {
+                            color: '#333'
+                        }
+                    },
+                    grid: {
+                        left: '5%',
+                        right: '5%',
+                        bottom: '10%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: ['第一批 (2006)', '第二批 (2008)', '第三批 (2011)', '第四批 (2014)', '第五批 (2021)'],
+                        axisLine: {
+                            lineStyle: {
+                                color: '#8b2323'
+                            }
+                        },
+                        axisLabel: {
+                            color: '#555'
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: '项目数量',
+                        nameTextStyle: {
+                            color: '#8b2323',
+                            padding: [0, 0, 0, 20]
+                        },
+                        axisLine: {
+                            show: true,
+                            lineStyle: {
+                                color: '#8b2323'
+                            }
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                color: '#f0e6d2',
+                                type: 'dashed'
+                            }
+                        }
+                    },
+                    series: [
+                        {
+                            name: '公布数量',
+                            type: 'line',
+                            smooth: true,
+                            symbol: 'circle',
+                            symbolSize: 10,
+                            itemStyle: {
+                                color: '#8b2323'
+                            },
+                            lineStyle: {
+                                width: 3,
+                                color: '#8b2323',
+                                shadowColor: 'rgba(139, 35, 35, 0.5)',
+                                shadowBlur: 10
+                            },
+                            areaStyle: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                    { offset: 0, color: 'rgba(139, 35, 35, 0.5)' },
+                                    { offset: 1, color: 'rgba(205, 168, 95, 0.1)' }
+                                ])
+                            },
+                            data: [518, 510, 191, 153, 185],
+                            label: {
+                                show: true,
+                                position: 'top',
+                                color: '#333',
+                                fontSize: 13,
+                                formatter: '{c}项'
+                            }
+                        }
+                    ]
+                };
+                
+                myChart.setOption(option);
+                // 窗口自适应改用jQuery
+                $(window).resize(function(){
+                    myChart.resize();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

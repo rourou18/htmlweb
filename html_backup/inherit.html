@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>传承保护 - 非遗传统文化</title>
+    <style>
+        :root {
+            --theme-color: #A03125;
+            --text-color: #333333;
+            --border-color: #E2CBB0;
+        }
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            /* 设置大图片作为页面底色（背景） */
+            background: url('./img/微信图片_20260318232841_77_23.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            width: 85%;
+            max-width: 1000px;
+            margin: 40px auto;
+            /* 半透明白色背景，毛玻璃效果，保证文字可读性 */
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            border-radius: 12px;
+            border-top: 6px solid var(--theme-color);
+        }
+        h1, h2 {
+            color: var(--theme-color);
+            text-align: center;
+        }
+        h1 { font-size: 2.2em; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        hr {
+            border: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, rgba(160, 49, 37, 0), rgba(160, 49, 37, 0.5), rgba(160, 49, 37, 0));
+            margin: 20px 0;
+        }
+        nav {
+            text-align: center;
+            background-color: rgba(248, 235, 225, 0.7);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--theme-color);
+            font-weight: bold;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border-radius: 4px;
+        }
+        nav a:hover {
+            background-color: var(--theme-color);
+            color: #fff;
+        }
+        .content {
+            font-size: 1.2em;
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(248, 235, 225, 0.5);
+            border-radius: 8px;
+            border-left: 4px solid var(--theme-color);
+            margin-bottom: 30px;
+        }
+        .gallery {
+            text-align: center;
+        }
+        .gallery img {
+            max-width: 80%;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        footer {
+            text-align: center;
+            color: #555;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px dotted var(--border-color);
+            font-size: 0.9em;
+        }
+
+        /* ----- 新增的详细 JS 功能配套 CSS ----- */
+        /* 1. 打字机光标动画 */
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1em;
+            vertical-align: middle;
+            background-color: var(--theme-color);
+            animation: blink 0.8s infinite;
+            margin-left: 3px;
+        }
+        @keyframes blink { 
+            0%, 100% { opacity: 1; } 
+            50% { opacity: 0; } 
+        }
+
+        /* 2. 手风琴交互折叠面板样式 */
+        .accordion-container {
+            margin: 30px auto;
+            max-width: 800px;
+        }
+        .accordion-item {
+            background-color: rgba(255, 255, 255, 0.85);
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+        .accordion-header {
+            width: 100%;
+            background-color: rgba(248, 235, 225, 0.9);
+            border: none;
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 1.15em;
+            font-weight: bold;
+            color: var(--theme-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion-header:hover, .accordion-header.active {
+            background-color: var(--theme-color);
+            color: #fff;
+        }
+        /* 图标变化 */
+        .accordion-header::after {
+            content: '+';
+            font-size: 1.4em;
+            transition: transform 0.4s ease;
+        }
+        .accordion-header.active::after {
+            content: '−';
+            transform: rotate(180deg);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            background-color: #fff;
+            padding: 0 20px;
+            opacity: 0.9;
+        }
+        .accordion-inner {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 15px;
+        }
+        .accordion-inner img {
+            width: 140px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+        .accordion-inner p {
+            flex: 1;
+            margin: 0;
+            color: #444;
+            line-height: 1.6;
+        }
+        @media (max-width: 600px) {
+            .accordion-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+            .accordion-inner img {
+                width: 100%;
+                height: 160px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="nav.js"></script>
+
+    <div class="container">
+        <h1>传承保护</h1>
+        <hr>
+        
+    
+
+        
+        <h2 id="typewriter-title"></h2>
+        <p class="content" id="typewriter-text" style="min-height: 80px;"></p>
+        
+        <div class="gallery">
+            <img src="img\微信图片_20260407144641_361_68.jpg" alt="非遗传承保护">
+        </div>
+
+        <!-- 新增：传承保护具体措施折叠面板 (Accordion) 带图片分类 -->
+        <div class="accordion-container">
+            <div class="accordion-item">
+                <button class="accordion-header">🏛️ 设立国家级代表性传承人</button>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        <img src="img/sxxc.jpg" alt="传承人传授技艺" onerror="this.src='img/微信图片_20260407220536_895_10.jpg'">
+                        <p>为非遗项目认定代表性传承人，提供专项传习补助，鼓励并支持他们开展传统文化的收徒传艺、整理技艺资料等核心活动，确保技艺的纯正不流失。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <button class="accordion-header">🏫 推动“非遗进校园”行动</button>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        <img src="img/cj.jpg" alt="非遗进校园" onerror="this.src='img/微信图片_20260407220537_896_10.jpg'">
+                        <p>将非物质文化遗产引入大中小学的教育课堂中，通过编制特色教材、开设文化选修课程、组建非遗社团，从小培养青少年对本土优秀传统文化的认同感与自豪感。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <button class="accordion-header">💻 档案溯源与数字化保护</button>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        <img src="img/bjky.jpg" alt="数字化保护" onerror="this.src='img/微信图片_20260407220538_897_10.jpg'">
+                        <p>积极利用现代高新科技手段（包括3D扫描技术、人体动作捕捉、超高清影像存档、VR/AR全景体验等），对濒危或复杂的非遗项目进行全面深度的抢救性数字化记录。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>版权所有 &copy; 2026 非遗传统文化网</p>
+        </footer>
+    </div>
+
+    <!-- 详细的 JavaScript 动态交互实现 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ==========================================
+            // 功能一：逐字打印（打字机）特效 (Typewriter)
+            // ==========================================
+            const titleText = "让非遗火起来、传下去";
+            const contentText = "非遗保护工作需要全社会的共同参与。通过建立国家级非遗名录、设立非遗传承人制度、开展非遗进校园等活动，让古老的中华文化焕发新生机。";
+            
+            const titleEl = document.getElementById('typewriter-title');
+            const contentEl = document.getElementById('typewriter-text');
+            
+            let titleIndex = 0;
+            let contentIndex = 0;
+
+            function typeTitle() {
+                if (titleIndex < titleText.length) {
+                    // 追加文字并保持光标在尾部
+                    titleEl.innerHTML = titleText.substring(0, titleIndex + 1) + '<span class="cursor"></span>';
+                    titleIndex++;
+                    setTimeout(typeTitle, 120); // 标题打字速度
+                } else {
+                    titleEl.innerHTML = titleText; // 标题打完，去除标题光标
+                    contentEl.innerHTML = '<span class="cursor"></span>'; // 在正文开头添加光标
+                    setTimeout(typeContent, 300); // 停顿一下开始打正文
+                }
+            }
+
+            function typeContent() {
+                if (contentIndex < contentText.length) {
+                    contentEl.innerHTML = contentText.substring(0, contentIndex + 1) + '<span class="cursor"></span>';
+                    contentIndex++;
+                    setTimeout(typeContent, 40); // 较快的正文打字速度
+                }
+            }
+            
+            // 延时 500ms 后启动打字机
+            setTimeout(typeTitle, 500);
+
+
+            // ==========================================
+            // 功能二：带有排他性的 折叠面板(Accordion) 交互
+            // ==========================================
+            const headers = document.querySelectorAll('.accordion-header');
+            
+            headers.forEach((header) => {
+                header.addEventListener('click', function() {
+                    // 排他性：点击某一个的视口，其他的要收起来
+                    headers.forEach(otherHeader => {
+                        if (otherHeader !== header && otherHeader.classList.contains('active')) {
+                            otherHeader.classList.remove('active');
+                            const otherContent = otherHeader.nextElementSibling;
+                            otherContent.style.maxHeight = 0;
+                            otherContent.style.paddingTop = "0";
+                            otherContent.style.paddingBottom = "0";
+                        }
+                    });
+
+                    // 切换被点击面板自身的状态
+                    this.classList.toggle('active');
+                    const content = this.nextElementSibling;
+                    
+                    if (this.classList.contains('active')) {
+                        // 展开直接设定一个足够大的 max-height 以兼容图片异步加载
+                        content.style.maxHeight = "500px";
+                        content.style.paddingTop = "15px";
+                        content.style.paddingBottom = "5px";
+                    } else {
+                        // 收起
+                        content.style.maxHeight = 0;
+                        content.style.paddingTop = "0";
+                        content.style.paddingBottom = "0";
+                    }
+                });
+            });
+
+            // 初始化：等待页面完全加载后，自动帮用户展开第一项以看到效果
+            if (headers.length > 0) {
+                setTimeout(() => {
+                    headers[0].click();
+                }, 1000); 
+            }
+        });
+    </script>
+</body>
+</html>

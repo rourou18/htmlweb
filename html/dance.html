@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>传统舞蹈 - 非遗传统文化</title>
+    <!-- 引入 jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        :root {
+            --primary-bg: #FCF4EB;     /* 浅米色背�?*/
+            --content-bg: #FFFFFF;     /* 内容区白�?*/
+            --theme-color: #A03125;    /* 传统文化中国�?*/
+            --text-color: #333333;     /* 深灰文字 */
+            --border-color: #E2CBB0;
+        }
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            width: 85%;
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: var(--content-bg);
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            border-top: 5px solid var(--theme-color);
+        }
+        h1, h2 {
+            color: var(--theme-color);
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, rgba(160, 49, 37, 0), rgba(160, 49, 37, 0.5), rgba(160, 49, 37, 0));
+            margin: 20px 0;
+        }
+        nav {
+            text-align: center;
+            background-color: #F8EBE1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        /* 导航栏固定样�?*/
+        nav.fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            border-radius: 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--theme-color);
+            font-weight: bold;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border-radius: 4px;
+        }
+        nav a:hover {
+            background-color: var(--theme-color);
+            color: #fff;
+        }
+        .content {
+            font-size: 1.15em;
+            text-align: justify;
+            text-indent: 2em;
+            margin-bottom: 30px;
+        }
+        .gallery {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .gallery img {
+            width: 30%;
+            min-width: 250px;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: zoom-in;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0; /* 初始透明，等�?jQuery 淡入 */
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(160, 49, 37, 0.2);
+        }
+        footer {
+            text-align: center;
+            color: #777;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px dotted var(--border-color);
+            font-size: 0.9em;
+        }
+        
+        /* 图片模态框 */
+        #img-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        #img-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        
+        /* 时间显示样式 */
+        #time-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(160, 49, 37, 0.9);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            z-index: 1001;
+        }
+        
+        /* 图表容器 */
+        #echarts-dance {
+            width: 100%;
+            height: 350px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+</head>
+<body>
+    <!-- 新增：系统时间显�?-->
+    <div id="time-display"></div>
+
+    <div class="container">
+        <h1>传统舞蹈</h1>
+        <hr>
+        
+        <nav id="main-nav">
+            <a href=" ">介绍</a >
+            <a href="#chart">数据对比</a >
+            <a href="#gallery">图片展示</a >
+        </nav>
+
+        <h2 id="intro">舞动神州</h2>
+        <p class="content">陕北秧歌、土家族摆手舞、朝鲜族农乐舞等，是广大劳动人民在长期历史发展中创造的具有鲜明民族风格和地方特色的舞蹈形式�?/p >
+        
+        <!-- 新增：ECharts 图表容器 -->
+        <div id="chart"></div>
+        <div id="echarts-dance"></div>
+
+        <div class="gallery" id="gallery">
+            < img src="./img/微信图片_20260318231442_107_614.jpg" alt="陕北秧歌">
+            < img src="./img/微信图片_20260318231321_105_614.jpg" alt="土家族摆手舞">
+            < img src="./img/微信图片_20260318231410_106_614.jpg" alt="朝鲜族农乐舞">
+            <!-- 新增的图片占位示例，你可以替换为真实的本地路�?-->
+            < img src="./img/5.jpg" alt="传统民族舞蹈展示1">
+            < img src="./img/微信图片_20260510212541_2_5.jpg" alt="传统民族舞蹈展示2">
+        </div>
+
+        <footer>
+            <p>版权所�?&copy; 2026 非遗传统文化�?/p >
+        </footer>
+    </div>
+
+    <!-- 简单的图片放大展示�?(Modal) -->
+    <div id="img-modal">
+        < img id="modal-img" src="" alt="放大图片">
+    </div>
+
+    <!-- jQuery 交互脚本 -->
+    <script>
+        $(function() {
+            // 1. 系统时间展示
+            function updateTime() {
+                const now = new Date();
+                const timeStr = now.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                $('#time-display').text(timeStr);
+            }
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // 2. 图片模态框功能（jQuery 改写�?
+            const $modal = $('#img-modal');
+            const $modalImg = $('#modal-img');
+            const $galleryImgs = $('.gallery img');
+
+            $galleryImgs.on('click', function() {
+                const src = $(this).attr('src');
+                $modalImg.attr('src', src);
+                $modal.fadeIn(300).css('display', 'flex');
+            });
+
+            $modal.on('click', function() {
+                $modal.fadeOut(300, function() {
+                    $modalImg.attr('src', '');
+                });
+            });
+
+            // 3. 图片淡入效果（加载完成后淡入�?
+            $galleryImgs.each(function() {
+                $(this).on('load', function() {
+                    $(this).animate({ opacity: 1 }, 500);
+                }).on('error', function() {
+                    $(this).attr('src', 'https://via.placeholder.com/300x200/E2CBB0/A03125?text=图片加载失败');
+                    $(this).animate({ opacity: 1 }, 500);
+                });
+            });
+
+            // 4. 导航栏滚动固定效�?
+            const $nav = $('#main-nav');
+            const navOffsetTop = $nav.offset().top;
+            $(window).on('scroll', function() {
+                if ($(window).scrollTop() > navOffsetTop) {
+                    $nav.addClass('fixed');
+                    $('body').css('padding-top', $nav.outerHeight() + 10);
+                } else {
+                    $nav.removeClass('fixed');
+                    $('body').css('padding-top', 0);
+                }
+            });
+
+            // 5. 锚点平滑滚动
+            $('a[href^="#"]').on('click', function(e) {
+                e.preventDefault();
+                const targetId = $(this).attr('href');
+                const $target = $(targetId);
+                if ($target.length) {
+                    $('html, body').animate({
+                        scrollTop: $target.offset().top - 80
+                    }, 600);
+                }
+            });
+
+            // 初始�?ECharts 图表
+            const chartDom = document.getElementById('echarts-dance');
+            if (chartDom) {
+                const myChart = echarts.init(chartDom);
+                const option = {
+                    title: {
+                        text: '部分地区传统舞蹈项目数量对比',
+                        left: 'center',
+                        textStyle: { color: '#A03125', fontSize: 18 }
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: { type: 'shadow' }
+                    },
+                    grid: {
+                        left: '5%', right: '5%', bottom: '10%', containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: ['西北地区', '西南地区', '东北地区', '中南地区', '华北地区'],
+                        axisLine: { lineStyle: { color: '#A03125' } },
+                        axisLabel: { color: '#555' }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLine: { show: true, lineStyle: { color: '#A03125' } },
+                        splitLine: { lineStyle: { type: 'dashed', color: '#E2CBB0' } }
+                    },
+                    series: [
+                        {
+                            name: '非遗舞蹈项目�?,
+                            type: 'bar',
+                            barWidth: '40%',
+                            itemStyle: {
+                                color: '#A03125',
+                                borderRadius: [4, 4, 0, 0]
+                            },
+                            data: [35, 48, 20, 42, 28]
+                        }
+                    ]
+                };
+                myChart.setOption(option);
+                
+                // 窗口变化时自适应图表
+                $(window).on('resize', function() {
+                    myChart.resize();
+                });
+            }
+        });
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>传统舞蹈 - 非遗传统文化</title>
+    <!-- 引入 jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        :root {
+            --primary-bg: #FCF4EB;     /* 浅米色背�?*/
+            --content-bg: #FFFFFF;     /* 内容区白�?*/
+            --theme-color: #A03125;    /* 传统文化中国�?*/
+            --text-color: #333333;     /* 深灰文字 */
+            --border-color: #E2CBB0;
+        }
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            width: 85%;
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: var(--content-bg);
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            border-top: 5px solid var(--theme-color);
+        }
+        h1, h2 {
+            color: var(--theme-color);
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, rgba(160, 49, 37, 0), rgba(160, 49, 37, 0.5), rgba(160, 49, 37, 0));
+            margin: 20px 0;
+        }
+        nav {
+            text-align: center;
+            background-color: #F8EBE1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        /* 导航栏固定样�?*/
+        nav.fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            border-radius: 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--theme-color);
+            font-weight: bold;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border-radius: 4px;
+        }
+        nav a:hover {
+            background-color: var(--theme-color);
+            color: #fff;
+        }
+        .content {
+            font-size: 1.15em;
+            text-align: justify;
+            text-indent: 2em;
+            margin-bottom: 30px;
+        }
+        .gallery {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .gallery img {
+            width: 30%;
+            min-width: 250px;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: zoom-in;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0; /* 初始透明，等�?jQuery 淡入 */
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(160, 49, 37, 0.2);
+        }
+        footer {
+            text-align: center;
+            color: #777;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px dotted var(--border-color);
+            font-size: 0.9em;
+        }
+        
+        /* 图片模态框 */
+        #img-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        #img-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        
+        /* 时间显示样式 */
+        #time-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(160, 49, 37, 0.9);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            z-index: 1001;
+        }
+        
+        /* 图表容器 */
+        #echarts-dance {
+            width: 100%;
+            height: 350px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+</head>
+<body>
+    <!-- 新增：系统时间显�?-->
+    <div id="time-display"></div>
+
+    <div class="container">
+        <h1>传统舞蹈</h1>
+        <hr>
+        
+        <nav id="main-nav">
+            <a href=" ">介绍</a >
+            <a href="#chart">数据对比</a >
+            <a href="#gallery">图片展示</a >
+        </nav>
+
+        <h2 id="intro">舞动神州</h2>
+        <p class="content">陕北秧歌、土家族摆手舞、朝鲜族农乐舞等，是广大劳动人民在长期历史发展中创造的具有鲜明民族风格和地方特色的舞蹈形式�?/p >
+        
+        <!-- 新增：ECharts 图表容器 -->
+        <div id="chart"></div>
+        <div id="echarts-dance"></div>
+
+        <div class="gallery" id="gallery">
+            < img src="./img/微信图片_20260318231442_107_614.jpg" alt="陕北秧歌">
+            < img src="./img/微信图片_20260318231321_105_614.jpg" alt="土家族摆手舞">
+            < img src="./img/微信图片_20260318231410_106_614.jpg" alt="朝鲜族农乐舞">
+            <!-- 新增的图片占位示例，你可以替换为真实的本地路�?-->
+            < img src="./img/5.jpg" alt="传统民族舞蹈展示1">
+            < img src="./img/微信图片_20260510212541_2_5.jpg" alt="传统民族舞蹈展示2">
+        </div>
+
+        <footer>
+            <p>版权所�?&copy; 2026 非遗传统文化�?/p >
+        </footer>
+    </div>
+
+    <!-- 简单的图片放大展示�?(Modal) -->
+    <div id="img-modal">
+        < img id="modal-img" src="" alt="放大图片">
+    </div>
+
+    <!-- jQuery 交互脚本 -->
+    <script>
+        $(function() {
+            // 1. 系统时间展示
+            function updateTime() {
+                const now = new Date();
+                const timeStr = now.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                $('#time-display').text(timeStr);
+            }
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // 2. 图片模态框功能（jQuery 改写�?
+            const $modal = $('#img-modal');
+            const $modalImg = $('#modal-img');
+            const $galleryImgs = $('.gallery img');
+
+            $galleryImgs.on('click', function() {
+                const src = $(this).attr('src');
+                $modalImg.attr('src', src);
+                $modal.fadeIn(300).css('display', 'flex');
+            });
+
+            $modal.on('click', function() {
+                $modal.fadeOut(300, function() {
+                    $modalImg.attr('src', '');
+                });
+            });
+
+            // 3. 图片淡入效果（加载完成后淡入�?
+            $galleryImgs.each(function() {
+                $(this).on('load', function() {
+                    $(this).animate({ opacity: 1 }, 500);
+                }).on('error', function() {
+                    $(this).attr('src', 'https://via.placeholder.com/300x200/E2CBB0/A03125?text=图片加载失败');
+                    $(this).animate({ opacity: 1 }, 500);
+                });
+            });
+
+            // 4. 导航栏滚动固定效�?
+            const $nav = $('#main-nav');
+            const navOffsetTop = $nav.offset().top;
+            $(window).on('scroll', function() {
+                if ($(window).scrollTop() > navOffsetTop) {
+                    $nav.addClass('fixed');
+                    $('body').css('padding-top', $nav.outerHeight() + 10);
+                } else {
+                    $nav.removeClass('fixed');
+                    $('body').css('padding-top', 0);
+                }
+            });
+
+            // 5. 锚点平滑滚动
+            $('a[href^="#"]').on('click', function(e) {
+                e.preventDefault();
+                const targetId = $(this).attr('href');
+                const $target = $(targetId);
+                if ($target.length) {
+                    $('html, body').animate({
+                        scrollTop: $target.offset().top - 80
+                    }, 600);
+                }
+            });
+
+            // 初始�?ECharts 图表
+            const chartDom = document.getElementById('echarts-dance');
+            if (chartDom) {
+                const myChart = echarts.init(chartDom);
+                const option = {
+                    title: {
+                        text: '部分地区传统舞蹈项目数量对比',
+                        left: 'center',
+                        textStyle: { color: '#A03125', fontSize: 18 }
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: { type: 'shadow' }
+                    },
+                    grid: {
+                        left: '5%', right: '5%', bottom: '10%', containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: ['西北地区', '西南地区', '东北地区', '中南地区', '华北地区'],
+                        axisLine: { lineStyle: { color: '#A03125' } },
+                        axisLabel: { color: '#555' }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLine: { show: true, lineStyle: { color: '#A03125' } },
+                        splitLine: { lineStyle: { type: 'dashed', color: '#E2CBB0' } }
+                    },
+                    series: [
+                        {
+                            name: '非遗舞蹈项目�?,
+                            type: 'bar',
+                            barWidth: '40%',
+                            itemStyle: {
+                                color: '#A03125',
+                                borderRadius: [4, 4, 0, 0]
+                            },
+                            data: [35, 48, 20, 42, 28]
+                        }
+                    ]
+                };
+                myChart.setOption(option);
+                
+                // 窗口变化时自适应图表
+                $(window).on('resize', function() {
+                    myChart.resize();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>传统舞蹈 - 非遗传统文化</title>
+    <!-- 引入 jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        :root {
+            --primary-bg: #FCF4EB;     /* 浅米色背景 */
+            --content-bg: #FFFFFF;     /* 内容区白底 */
+            --theme-color: #A03125;    /* 传统文化中国红 */
+            --text-color: #333333;     /* 深灰文字 */
+            --border-color: #E2CBB0;
+        }
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            width: 85%;
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: var(--content-bg);
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            border-top: 5px solid var(--theme-color);
+        }
+        h1, h2 {
+            color: var(--theme-color);
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, rgba(160, 49, 37, 0), rgba(160, 49, 37, 0.5), rgba(160, 49, 37, 0));
+            margin: 20px 0;
+        }
+        nav {
+            text-align: center;
+            background-color: #F8EBE1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        /* 导航栏固定样式 */
+        nav.fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            border-radius: 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--theme-color);
+            font-weight: bold;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border-radius: 4px;
+        }
+        nav a:hover {
+            background-color: var(--theme-color);
+            color: #fff;
+        }
+        .content {
+            font-size: 1.15em;
+            text-align: justify;
+            text-indent: 2em;
+            margin-bottom: 30px;
+        }
+        .gallery {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .gallery img {
+            width: 30%;
+            min-width: 250px;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: zoom-in;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0; /* 初始透明，等待 jQuery 淡入 */
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(160, 49, 37, 0.2);
+        }
+        footer {
+            text-align: center;
+            color: #777;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px dotted var(--border-color);
+            font-size: 0.9em;
+        }
+        
+        /* 图片模态框 */
+        #img-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        #img-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        
+        /* 时间显示样式 */
+        #time-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(160, 49, 37, 0.9);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            z-index: 1001;
+        }
+        
+        /* 图表容器 */
+        #echarts-dance {
+            width: 100%;
+            height: 350px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+</head>
+<body>
+    <!-- 新增：系统时间显示 -->
+    <div id="time-display"></div>
+
+    <div class="container">
+        <h1>传统舞蹈</h1>
+        <hr>
+        
+        <nav id="main-nav">
+            <a href=" ">介绍</a >
+            <a href="#chart">数据对比</a >
+            <a href="#gallery">图片展示</a >
+        </nav>
+
+        <h2 id="intro">舞动神州</h2>
+        <p class="content">陕北秧歌、土家族摆手舞、朝鲜族农乐舞等，是广大劳动人民在长期历史发展中创造的具有鲜明民族风格和地方特色的舞蹈形式。</p >
+        
+        <!-- 新增：ECharts 图表容器 -->
+        <div id="chart"></div>
+        <div id="echarts-dance"></div>
+
+        <div class="gallery" id="gallery">
+            < img src="./img/微信图片_20260318231442_107_614.jpg" alt="陕北秧歌">
+            < img src="./img/微信图片_20260318231321_105_614.jpg" alt="土家族摆手舞">
+            < img src="./img/微信图片_20260318231410_106_614.jpg" alt="朝鲜族农乐舞">
+            <!-- 新增的图片占位示例，你可以替换为真实的本地路径 -->
+            < img src="./img/5.jpg" alt="传统民族舞蹈展示1">
+            < img src="./img/微信图片_20260510212541_2_5.jpg" alt="传统民族舞蹈展示2">
+        </div>
+
+        <footer>
+            <p>版权所有 &copy; 2026 非遗传统文化网</p >
+        </footer>
+    </div>
+
+    <!-- 简单的图片放大展示层 (Modal) -->
+    <div id="img-modal">
+        < img id="modal-img" src="" alt="放大图片">
+    </div>
+
+    <!-- jQuery 交互脚本 -->
+    <script>
+        $(function() {
+            // 1. 系统时间展示
+            function updateTime() {
+                const now = new Date();
+                const timeStr = now.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                $('#time-display').text(timeStr);
+            }
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // 2. 图片模态框功能（jQuery 改写）
+            const $modal = $('#img-modal');
+            const $modalImg = $('#modal-img');
+            const $galleryImgs = $('.gallery img');
+
+            $galleryImgs.on('click', function() {
+                const src = $(this).attr('src');
+                $modalImg.attr('src', src);
+                $modal.fadeIn(300).css('display', 'flex');
+            });
+
+            $modal.on('click', function() {
+                $modal.fadeOut(300, function() {
+                    $modalImg.attr('src', '');
+                });
+            });
+
+            // 3. 图片淡入效果（加载完成后淡入）
+            $galleryImgs.each(function() {
+                $(this).on('load', function() {
+                    $(this).animate({ opacity: 1 }, 500);
+                }).on('error', function() {
+                    $(this).attr('src', 'https://via.placeholder.com/300x200/E2CBB0/A03125?text=图片加载失败');
+                    $(this).animate({ opacity: 1 }, 500);
+                });
+            });
+
+            // 4. 导航栏滚动固定效果
+            const $nav = $('#main-nav');
+            const navOffsetTop = $nav.offset().top;
+            $(window).on('scroll', function() {
+                if ($(window).scrollTop() > navOffsetTop) {
+                    $nav.addClass('fixed');
+                    $('body').css('padding-top', $nav.outerHeight() + 10);
+                } else {
+                    $nav.removeClass('fixed');
+                    $('body').css('padding-top', 0);
+                }
+            });
+
+            // 5. 锚点平滑滚动
+            $('a[href^="#"]').on('click', function(e) {
+                e.preventDefault();
+                const targetId = $(this).attr('href');
+                const $target = $(targetId);
+                if ($target.length) {
+                    $('html, body').animate({
+                        scrollTop: $target.offset().top - 80
+                    }, 600);
+                }
+            });
+
+            // 初始化 ECharts 图表
+            const chartDom = document.getElementById('echarts-dance');
+            if (chartDom) {
+                const myChart = echarts.init(chartDom);
+                const option = {
+                    title: {
+                        text: '部分地区传统舞蹈项目数量对比',
+                        left: 'center',
+                        textStyle: { color: '#A03125', fontSize: 18 }
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: { type: 'shadow' }
+                    },
+                    grid: {
+                        left: '5%', right: '5%', bottom: '10%', containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: ['西北地区', '西南地区', '东北地区', '中南地区', '华北地区'],
+                        axisLine: { lineStyle: { color: '#A03125' } },
+                        axisLabel: { color: '#555' }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLine: { show: true, lineStyle: { color: '#A03125' } },
+                        splitLine: { lineStyle: { type: 'dashed', color: '#E2CBB0' } }
+                    },
+                    series: [
+                        {
+                            name: '非遗舞蹈项目数',
+                            type: 'bar',
+                            barWidth: '40%',
+                            itemStyle: {
+                                color: '#A03125',
+                                borderRadius: [4, 4, 0, 0]
+                            },
+                            data: [35, 48, 20, 42, 28]
+                        }
+                    ]
+                };
+                myChart.setOption(option);
+                
+                // 窗口变化时自适应图表
+                $(window).on('resize', function() {
+                    myChart.resize();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
