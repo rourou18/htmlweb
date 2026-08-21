@@ -64,12 +64,10 @@ document.write(`
     <a href="intro.html">非遗概述</a> <span class="divider">|</span>
     <a href="craft.html">传统工艺</a> <span class="divider">|</span>
     <a href="music.html">传统音乐</a> <span class="divider">|</span>
-    <a href="dance.html">传统舞蹈</a> <span class="divider">|</span>
     <a href="opera.html">传统戏曲</a> <span class="divider">|</span>
     <a href="food.html">美食技艺</a> <span class="divider">|</span>
     <a href="festival.html">传统节日</a> <span class="divider">|</span>
-    <a href="inherit.html">传承保护</a> <span class="divider">|</span>
-    <a href="form.html">意见反馈</a>
+    <a href="inherit.html">传承保护</a>
 </nav>
 <div id="back-to-top">返回顶部 ▲</div>
 `);
